@@ -1,0 +1,115 @@
+function shuffleform() {
+    num_sets = 15;
+    const ss = SpreadsheetApp.getActive().getActiveSheet();
+    start_row = 2;
+    inc = 10;
+
+    for (var j = 0; j < num_sets; j++) {
+        const questionList= [];
+        const option_a = [] ;
+        const option_b= [];
+        const option_c =[];
+        const option_d =[];
+        const answer =[];
+        const id_form=[]
+        //create a random number without repeatation
+       //to add number of questions(n) in qb instead of 99 add (n-1)
+        var arr = [];
+        while(arr.length < 11){
+            var r = Math.floor(Math.random() * 134) + 1;
+                  if(arr.indexOf(r) === -1) arr.push(r);
+          }
+        const formName = ss.getRange(j+1, 1,1).getValues();
+        for (i = 0; i < 10; i++) {
+          
+        //to add number of questions(n) in qb instead of 99 add (n-1)
+        //var number = Math.floor(Math.random() * 99) + 1;
+        var number =arr[i]
+        questionList.push (ss.getRange(number, 2 ).getValues());
+        option_a.push( ss.getRange(number, 3).getValues());
+        option_b.push ( ss.getRange(number, 4).getValues());
+        option_c.push ( ss.getRange(number, 5).getValues());
+        option_d.push ( ss.getRange(number, 6).getValues());
+        answer.push ( ss.getRange(number, 7).getValues());
+        }
+  
+  
+
+        const form = FormApp.create(formName);
+        id_form.push(form.getId());
+        ss.getRange(j+1,8).setValue(id_form);
+
+        const item_name = form.addTextItem().setTitle("Name").setRequired(true);;
+        const item_roll = form.addTextItem().setTitle("Roll Number").setRequired(true);;
+        var textValidation = FormApp.createTextValidation()
+            .setHelpText('Input was not a number')
+            .requireNumber()
+            //.requireNumberBetween(1705001, 1705400)
+            .build();
+        item_roll.setValidation(textValidation);
+
+        //var item = form.addSectionHeaderItem();
+
+        form.setIsQuiz(true)
+            .setRequireLogin(false)
+            .setAcceptingResponses(true)
+            .setShuffleQuestions(true)
+            .setCollectEmail(false)
+            .setLimitOneResponsePerUser(true)
+            .setProgressBar(false)
+            .setAllowResponseEdits(false)
+            .setShowLinkToRespondAgain(false);
+
+        for (var i = 0; i < 10; i++) {
+            const item = form.addMultipleChoiceItem();
+            item.setTitle(questionList[i]);
+            item.setPoints(1);
+            item.setRequired(true);
+
+            var ans;
+
+            if (answer[i] == "1") {
+                ans = [true, false, false, false]
+            }
+            if (answer[i] == "2") {
+                ans = [false, true, false, false]
+            }
+            if (answer[i] == "3") {
+                ans = [false, false, true, false]
+            }
+            if (answer[i] == "4") {
+                ans = [false, false, false, true]
+            }
+
+            if (option_c[i] != "") {
+                item.setChoices([
+                    item.createChoice(option_a[i], ans[0]),
+                    item.createChoice(option_b[i], ans[1]),
+                    item.createChoice(option_c[i], ans[2]),
+                    item.createChoice(option_d[i], ans[3])
+                ]);
+            } else {
+                item.setChoices([
+                    item.createChoice(option_a[i], ans[0]),
+                    item.createChoice(option_b[i], ans[1])
+                ]);
+            }
+
+        }
+
+        // press Ctrl+Enter to see form urls
+        Logger.log('Published URL: ' + form.getPublishedUrl());
+        Logger.log('Editor URL: ' + form.getEditUrl());
+
+      
+        start_row += inc
+        
+        
+
+    }
+
+
+
+}
+
+
