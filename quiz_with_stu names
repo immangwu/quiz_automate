@@ -1,0 +1,173 @@
+function shuffleform1() {
+    num_sets = 72;
+    const ss = SpreadsheetApp.getActive().getActiveSheet();
+    start_row = 2;
+    inc = 10;
+    
+  
+    for (var j = 0; j < num_sets; j++) {
+        const questionList= [];
+        const option_a = [] ;
+        const option_b= [];
+        const option_c =[];
+        const option_d =[];
+        const answer =[];
+        const id_form=[]
+        //create a random number without repeatation
+       //to add number of questions(n) in qb instead of 99 add (n-1)
+        var arr = [];
+        while(arr.length < 11){
+            var r = Math.floor(Math.random() * 113) + 1;
+                  if(arr.indexOf(r) === -1) arr.push(r);
+          }
+        var formName = ss.getRange(j+1, 1,1).getValues();
+        for (i = 0; i < 10; i++) {
+          
+        //to add number of questions(n) in qb instead of 99 add (n-1)
+        //var number = Math.floor(Math.random() * 99) + 1;
+        var number =arr[i]
+        questionList.push (ss.getRange(number, 2 ).getValues());
+        option_a.push( ss.getRange(number, 3).getValues());
+        option_b.push ( ss.getRange(number, 4).getValues());
+        option_c.push ( ss.getRange(number, 5).getValues());
+        option_d.push ( ss.getRange(number, 6).getValues());
+        answer.push ( ss.getRange(number, 7).getValues());
+        }
+  
+        
+        
+        
+        const form = FormApp.create(formName);
+        var id="ctl03_Tabs1";
+        var res = id.charAt(id.length-1)
+        
+        if (String(formName)[String(formName).length-1] == "1"){
+          var namesValues = ss.getRange(1, 9,10).getValues();
+          var studentNames = [];
+          for(var i = 0; i < namesValues.length; i++){   
+            if(namesValues[i][0] != ""){
+              studentNames[i] = namesValues[i][0];}}
+          
+        }
+        else if (String(formName)[String(formName).length-1] == "2"){
+          var namesValues = ss.getRange(11, 9,10).getValues();
+          var studentNames = [];
+          for(var i = 0; i < namesValues.length; i++){   
+            if(namesValues[i][0] != ""){
+              studentNames[i] = namesValues[i][0];}}
+          
+        }
+        else if (String(formName)[String(formName).length-1] == "3"){
+          var namesValues = ss.getRange(21, 9,10).getValues();
+          var studentNames = [];
+          for(var i = 0; i < namesValues.length; i++){   
+            if(namesValues[i][0] != ""){
+              studentNames[i] = namesValues[i][0];}}
+          
+        }
+        else if (String(formName)[String(formName).length-1] == "4"){
+          var namesValues = ss.getRange(31, 9,10).getValues();
+          var studentNames = [];
+          for(var i = 0; i < namesValues.length; i++){   
+            if(namesValues[i][0] != ""){
+              studentNames[i] = namesValues[i][0];}}
+          
+        }
+        else if (String(formName)[String(formName).length-1] == "5"){
+          var namesValues = ss.getRange(41, 9,10).getValues();
+          var studentNames = [];
+          for(var i = 0; i < namesValues.length; i++){   
+            if(namesValues[i][0] != ""){
+              studentNames[i] = namesValues[i][0];}}
+          
+        }
+        else {
+          var namesValues = ss.getRange(51, 9,8).getValues();
+          var studentNames = [];
+          for(var i = 0; i < namesValues.length; i++){   
+            if(namesValues[i][0] != ""){
+              studentNames[i] = namesValues[i][0];}}
+          
+        }
+        id_form.push(form.getId());
+        ss.getRange(j+1,8).setValue(id_form);
+
+        const item_name = form.addTextItem().setTitle("Name").setRequired(true);;
+        var item = form.addListItem();
+        
+        item.setTitle('Register Number for Regular, Name For Lateral Entry')
+             item.setChoiceValues(studentNames);
+        
+        //const item_roll = form.addTextItem().setTitle("Roll Number").setRequired(true);;
+        //var textValidation = FormApp.createTextValidation()
+            //.setHelpText('Input was not a number')
+            //.requireNumber()
+            //.requireNumberBetween(1705001, 1705400)
+            //.build();
+        //item_roll.setValidation(textValidation);
+
+        //var item = form.addSectionHeaderItem();
+
+        form.setIsQuiz(true)
+             //.setRequireLogin(false)
+            .setAcceptingResponses(true)
+            .setShuffleQuestions(false)
+            .setCollectEmail(true)
+            .setLimitOneResponsePerUser(true)
+            .setProgressBar(true)
+            .setAllowResponseEdits(false)
+            .setShowLinkToRespondAgain(false);
+
+        for (var i = 0; i < 10; i++) {
+            const item = form.addMultipleChoiceItem();
+            item.setTitle(questionList[i]);
+            item.setPoints(1);
+            item.setRequired(true);
+
+            var ans;
+
+            if (answer[i] == "1") {
+                ans = [true, false, false, false]
+            }
+            if (answer[i] == "2") {
+                ans = [false, true, false, false]
+            }
+            if (answer[i] == "3") {
+                ans = [false, false, true, false]
+            }
+            if (answer[i] == "4") {
+                ans = [false, false, false, true]
+            }
+
+            if (option_c[i] != "") {
+                item.setChoices([
+                    item.createChoice(option_a[i], ans[0]),
+                    item.createChoice(option_b[i], ans[1]),
+                    item.createChoice(option_c[i], ans[2]),
+                    item.createChoice(option_d[i], ans[3])
+                ]);
+            } else {
+                item.setChoices([
+                    item.createChoice(option_a[i], ans[0]),
+                    item.createChoice(option_b[i], ans[1])
+                ]);
+            }
+
+        }
+
+        // press Ctrl+Enter to see form urls
+        Logger.log('Published URL: ' + form.getPublishedUrl());
+        Logger.log('Editor URL: ' + form.getEditUrl());
+
+      
+        start_row += inc
+        
+        
+
+    }
+
+
+
+}
+
+
